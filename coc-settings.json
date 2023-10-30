@@ -1,0 +1,29 @@
+{
+    "codeLens.enable": true,
+    "languageserver": {
+        "bash": {
+            "command": "bash-language-server",
+            "args": ["start"],
+            "filetypes": ["sh"]
+        },
+        "dockerfile": {
+            "command": "docker-langserver",
+            "filetypes": ["dockerfile"],
+            "args": ["--stdio"]
+        },
+        "elixirLS": {
+            "command": "/absolute/path/to/elixir-ls/release/language_server.sh",
+            "filetypes": ["elixir", "eelixir"]
+        },
+        "golang": {
+            "command": "gopls",
+            "rootPatterns": ["go.mod"],
+            "filetypes": ["go"]
+        },
+        "sql": {
+            "module": "/path/to/node_modules/sql-language-server/dist/bin/cli.js",
+            "args": ["up", "--method", "node-ipc"],
+            "filetypes": ["sql", "mysql"]
+        }
+    }
+}

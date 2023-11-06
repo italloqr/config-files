@@ -1,8 +1,8 @@
 :syntax on            " Enable syntax highlight
 :set nu               " Enable line numbers
-:set tabstop=2        " Show existing tab with 4 spaces width
-:set softtabstop=2    " Show existing tab with 4 spaces width
-:set shiftwidth=2     " When indenting with '>', use 4 spaces width
+:set tabstop=2        " Show existing tab with 2 spaces width
+:set softtabstop=2    " Show existing tab with 2 spaces width
+:set shiftwidth=2     " When indenting with '>', use 2 spaces width
 :set expandtab        " On pressing tab, insert 4 spaces
 :set smarttab         " insert tabs on the start of a line according to shiftwidth
 :set smartindent      " Automatically inserts one extra level of indentation in some cases
@@ -45,14 +45,25 @@ Plug 'tc50cal/vim-terminal'
 Plug 'ryanoasis/vim-devicons'
 Plug 'ap/vim-css-color'
 Plug 'ThePrimeagen/vim-be-good'
+Plug 'dense-analysis/ale'
+Plug 'f-person/git-blame.nvim'
 call plug#end()
 
 " Remaps"
-" Shortcuts for split navigation
+" Shortcuts for split navigation.
 map <C-h> <C-w>h
 map <C-j> <C-w>j
 map <C-k> <C-w>k
 map <C-l> <C-w>l
+
+" Navigate between buffers
+nmap ty :bn<CR>
+nmap tr :bp<CR>
+
+nmap th :split<CR>
+nmap tv :vsplit<CR>
+
+nmap tt :q<CR>
 
 " Telescope
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
@@ -66,17 +77,17 @@ nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 " Themes
 colorscheme sonokai
 
+let g:sonokai_style = 'shusia'
+let g:sonokai_enable_italic = 1
+let g:sonokai_disable_italic_comment = 0
+let g:sonokai_diagnostic_line_highlight = 1
+let g:sonokai_current_word = 'bold'
+
 if exists('+termguicolors')
   let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
   let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
   set termguicolors
 endif
-
-let g:sonokai_style = 'atlantis'
-let g:sonokai_enable_italic = 1
-let g:sonokai_disable_italic_comment = 0
-let g:sonokai_diagnostic_line_highlight = 1
-let g:sonokai_current_word = 'bold'
 
 "if (has("nvim")) "Transparent background. Only for nvim
 "    highlight Normal guibg=NONE ctermbg=NONE
@@ -84,10 +95,16 @@ let g:sonokai_current_word = 'bold'
 "endif
 
 
-" AirLine
+" AirLine - Barra de status
 let g:airline#extensions#tabline#enabled = 1 "tabs on top
 let g:airline_powerline_fonts = 1 "active nerd fonts
 let g:airline_theme = 'sonokai' "sonokai theme for airline
+
+
+" ALE
+let g:ale_linters = {
+\   'javascript': ['eslint'],
+\}
 
 "nerdtree
 nmap <C-a> :NERDTreeToggle<CR>

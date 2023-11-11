@@ -1,9 +1,9 @@
+" Configs
 :syntax on            " Enable syntax highlight
 :set nu               " Enable line numbers
 :set tabstop=2        " Show existing tab with 2 spaces width
 :set softtabstop=2    " Show existing tab with 2 spaces width
 :set shiftwidth=2     " When indenting with '>', use 2 spaces width
-:set expandtab        " On pressing tab, insert 4 spaces
 :set smarttab         " insert tabs on the start of a line according to shiftwidth
 :set smartindent      " Automatically inserts one extra level of indentation in some cases
 :set hidden           " Hides the current buffer when a new file is openned
@@ -22,12 +22,17 @@
 :set splitbelow       " Create the horizontal splits below
 :set autoread         " Update vim after file update from outside
 :set mouse=a          " Enable mouse support
+:set incsearch
+:set wildmenu
+:set title
+:set clipboard=unnamedplus
+
 :filetype on          " Detect and set the filetype option and trigger the FileType Event
 :filetype plugin on   " Load the plugin file for the file type, if any
 :filetype indent on   " Load the indent file for the file type, if any
 
+" Plugins
 call plug#begin()
-Plug 'sainnhe/sonokai'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'ryanoasis/vim-devicons'
@@ -35,21 +40,41 @@ Plug 'sheerun/vim-polyglot'
 Plug 'preservim/nerdtree'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'Xuyuanp/nerdtree-git-plugin'
-Plug 'neoclide/coc.nvim' , { 'branch' : 'release' }
-Plug 'honza/vim-snippets'
 Plug 'jiangmiao/auto-pairs'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.4' }
 Plug 'terryma/vim-multiple-cursors'
-Plug 'tc50cal/vim-terminal'
-Plug 'ryanoasis/vim-devicons'
 Plug 'ap/vim-css-color'
 Plug 'ThePrimeagen/vim-be-good'
 Plug 'dense-analysis/ale'
 Plug 'f-person/git-blame.nvim'
+Plug 'bluz71/vim-nightfly-colors', { 'as': 'nightfly' }
+Plug 'numToStr/Comment.nvim'
+Plug 'neoclide/coc.nvim' , { 'branch' : 'release' }
+Plug 'honza/vim-snippets'
+Plug 'akinsho/toggleterm.nvim', {'tag' : '*'}
+Plug 'lukas-reineke/indent-blankline.nvim'
+Plug 'akinsho/git-conflict.nvim'
 call plug#end()
 
-" Remaps"
+lua require("toggleterm").setup()
+lua require('Comment').setup()
+lua require("ibl").setup()
+lua require('git-conflict').setup()
+
+" Theme
+" Vimscript initialization file
+let g:nightflyTerminalColors = v:false
+
+" Vimscript initialization file
+augroup CustomHighlight
+    autocmd!
+    autocmd ColorScheme nightfly highlight Function guifg=#82aaff gui=bold
+augroup END
+
+colorscheme nightfly
+
+" Remaps
 " Shortcuts for split navigation.
 map <C-h> <C-w>h
 map <C-j> <C-w>j
@@ -59,10 +84,8 @@ map <C-l> <C-w>l
 " Navigate between buffers
 nmap ty :bn<CR>
 nmap tr :bp<CR>
-
 nmap th :split<CR>
 nmap tv :vsplit<CR>
-
 nmap tt :q<CR>
 
 " Telescope
@@ -71,67 +94,35 @@ nnoremap <leader>fg <cmd>Telescope live_grep<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 
-" autocmd
-" autocmds aqui
+"nerdtree
+nmap <C-a> :NERDTreeToggle<CR>
 
-" Themes
-colorscheme sonokai
+" Replace
+nmap rp :%s/
 
-let g:sonokai_style = 'shusia'
-let g:sonokai_enable_italic = 1
-let g:sonokai_disable_italic_comment = 0
-let g:sonokai_diagnostic_line_highlight = 1
-let g:sonokai_current_word = 'bold'
-
-if exists('+termguicolors')
-  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-  set termguicolors
-endif
-
-"if (has("nvim")) "Transparent background. Only for nvim
-"    highlight Normal guibg=NONE ctermbg=NONE
-"    highlight EndOfBuffer guibg=NONE ctermbg=NONE
-"endif
-
+" Terminal
+nmap tm <cmd>ToggleTerm size=30 dir=$PWD direction=horizontal name=terminal<CR>
 
 " AirLine - Barra de status
 let g:airline#extensions#tabline#enabled = 1 "tabs on top
 let g:airline_powerline_fonts = 1 "active nerd fonts
-let g:airline_theme = 'sonokai' "sonokai theme for airline
+
+" Functions
+function! HighlightWordUnderCursor()
+    if getline(".")[col(".")-1] !~# '[[:punct:][:blank:]]'
+        exec 'match' 'Search' '/\V\<'.expand('<cword>').'\>/'
+    else
+        match none
+    endif
+endfunction
+
+autocmd! CursorHold,CursorHoldI * call HighlightWordUnderCursor()
 
 
-" ALE
-let g:ale_linters = {
-\   'javascript': ['eslint'],
-\}
-
-"nerdtree
-nmap <C-a> :NERDTreeToggle<CR>
 
 "COC
-let g:coc_global_extensions = ['coc-snippets',]
+let g:coc_global_extensions = ['coc-snippets']
 
-" May need for Vim (not Neovim) since coc.nvim calculates byte offset by count
-" utf-8 byte sequence
-set encoding=utf-8
-" Some servers have issues with backup files, see #649
-set nobackup
-set nowritebackup
-
-" Having longer updatetime (default is 4000 ms = 4s) leads to noticeable
-" delays and poor user experience
-set updatetime=300
-
-" Always show the signcolumn, otherwise it would shift the text each time
-" diagnostics appear/become resolved
-set signcolumn=yes
-
-" Use tab for trigger completion with characters ahead and navigate
-" NOTE: There's always complete item selected by default, you may want to enable
-" no select by `"suggest.noselect": true` in your configuration file
-" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
-" other plugin before putting this into your config
 inoremap <silent><expr> <TAB>
       \ coc#pum#visible() ? coc#pum#next(1) :
       \ CheckBackspace() ? "\<Tab>" :
@@ -141,7 +132,7 @@ inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 " Make <CR> to accept selected completion item or notify coc.nvim to format
 " <C-g>u breaks current undo, please make your own choice
 inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
-                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+\: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 function! CheckBackspace() abort
   let col = col('.') - 1
@@ -291,27 +282,3 @@ imap <C-j> <Plug>(coc-snippets-expand-jump)
 
 " Use <leader>x for convert visual selected code to snippet
 xmap <leader>x  <Plug>(coc-convert-snippet)
-
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? coc#_select_confirm() :
-      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-let g:coc_snippet_next = '<tab>'
-
-
-function! HighlightWordUnderCursor()
-    if getline(".")[col(".")-1] !~# '[[:punct:][:blank:]]'
-        exec 'match' 'Search' '/\V\<'.expand('<cword>').'\>/'
-    else
-        match none
-    endif
-endfunction
-
-autocmd! CursorHold,CursorHoldI * call HighlightWordUnderCursor()

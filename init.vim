@@ -23,7 +23,6 @@
 :set autoread         " Update vim after file update from outside
 :set mouse=a          " Enable mouse support
 :set incsearch
-:set wildmenu
 :set title
 :set clipboard=unnamedplus
 
@@ -43,7 +42,6 @@ Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'jiangmiao/auto-pairs'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.4' }
-Plug 'terryma/vim-multiple-cursors'
 Plug 'ap/vim-css-color'
 Plug 'ThePrimeagen/vim-be-good'
 Plug 'dense-analysis/ale'
@@ -55,6 +53,7 @@ Plug 'honza/vim-snippets'
 Plug 'akinsho/toggleterm.nvim', {'tag' : '*'}
 Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'akinsho/git-conflict.nvim'
+Plug 'mg979/vim-visual-multi', {'branch': 'master'}
 call plug#end()
 
 lua require("toggleterm").setup()
@@ -68,8 +67,8 @@ let g:nightflyTerminalColors = v:false
 
 " Vimscript initialization file
 augroup CustomHighlight
-    autocmd!
-    autocmd ColorScheme nightfly highlight Function guifg=#82aaff gui=bold
+autocmd!
+autocmd ColorScheme nightfly highlight Function guifg=#82aaff gui=bold
 augroup END
 
 colorscheme nightfly
@@ -96,7 +95,6 @@ nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 
 "nerdtree
 nmap <C-a> :NERDTreeToggle<CR>
-
 " Replace
 nmap rp :%s/
 
@@ -109,24 +107,22 @@ let g:airline_powerline_fonts = 1 "active nerd fonts
 
 " Functions
 function! HighlightWordUnderCursor()
-    if getline(".")[col(".")-1] !~# '[[:punct:][:blank:]]'
-        exec 'match' 'Search' '/\V\<'.expand('<cword>').'\>/'
-    else
-        match none
-    endif
+if getline(".")[col(".")-1] !~# '[[:punct:][:blank:]]'
+exec 'match' 'Search' '/\V\<'.expand('<cword>').'\>/'
+else
+match none
+endif
 endfunction
 
 autocmd! CursorHold,CursorHoldI * call HighlightWordUnderCursor()
-
-
 
 "COC
 let g:coc_global_extensions = ['coc-snippets']
 
 inoremap <silent><expr> <TAB>
-      \ coc#pum#visible() ? coc#pum#next(1) :
-      \ CheckBackspace() ? "\<Tab>" :
-      \ coc#refresh()
+\ coc#pum#visible() ? coc#pum#next(1) :
+\ CheckBackspace() ? "\<Tab>" :
+\ coc#refresh()
 inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 
 " Make <CR> to accept selected completion item or notify coc.nvim to format
@@ -135,15 +131,15 @@ inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
 \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 function! CheckBackspace() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
+let col = col('.') - 1
+return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
 " Use <c-space> to trigger completion
 if has('nvim')
-  inoremap <silent><expr> <c-space> coc#refresh()
+inoremap <silent><expr> <c-space> coc#refresh()
 else
-  inoremap <silent><expr> <c-@> coc#refresh()
+inoremap <silent><expr> <c-@> coc#refresh()
 endif
 
 " Use `[g` and `]g` to navigate diagnostics
@@ -161,11 +157,11 @@ nmap <silent> gr <Plug>(coc-references)
 nnoremap <silent> K :call ShowDocumentation()<CR>
 
 function! ShowDocumentation()
-  if CocAction('hasProvider', 'hover')
-    call CocActionAsync('doHover')
-  else
-    call feedkeys('K', 'in')
-  endif
+if CocAction('hasProvider', 'hover')
+call CocActionAsync('doHover')
+else
+call feedkeys('K', 'in')
+endif
 endfunction
 
 " Highlight the symbol and its references when holding the cursor
@@ -179,11 +175,11 @@ xmap <leader>f  <Plug>(coc-format-selected)
 nmap <leader>f  <Plug>(coc-format-selected)
 
 augroup mygroup
-  autocmd!
-  " Setup formatexpr specified filetype(s)
-  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
-  " Update signature help on jump placeholder
-  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+autocmd!
+" Setup formatexpr specified filetype(s)
+autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+" Update signature help on jump placeholder
+autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 augroup end
 
 " Applying code actions to the selected code block
@@ -219,12 +215,12 @@ omap ac <Plug>(coc-classobj-a)
 
 " Remap <C-f> and <C-b> to scroll float windows/popups
 if has('nvim-0.4.0') || has('patch-8.2.0750')
-  nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-  nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-  inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
-  inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
-  vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-  vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 endif
 
 " Use CTRL-S for selections ranges
@@ -282,3 +278,5 @@ imap <C-j> <Plug>(coc-snippets-expand-jump)
 
 " Use <leader>x for convert visual selected code to snippet
 xmap <leader>x  <Plug>(coc-convert-snippet)
+
+nnoremap <leader>j *``cgn

@@ -9,6 +9,9 @@ vim.keymap.set("n", "<C-b>", vim.cmd.Ex)
 --vim.keymap.set("n", "<C-u>", "<C-u>zz")
 
 --vim.keymap.set("i", "<C-c>", "<Esc>")
+vim.keymap.set("n", "tr", ":bp<CR>")
+vim.keymap.set("n", "ty", ":bn<CR>")
+vim.keymap.set("n", "td", ":bd<CR>")
 
 --vim.keymap.set("n", "<leader><leader>", function()
 --    vim.cmd("so")

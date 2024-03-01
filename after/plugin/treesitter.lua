@@ -11,7 +11,8 @@ require'nvim-treesitter.configs'.setup {
 	  "go",
 	  "yaml",
 	  "vue",
-	  "clojure"
+	  "clojure",
+		"css"
   },
 
   -- Install parsers synchronously (only applied to `ensure_installed`)
